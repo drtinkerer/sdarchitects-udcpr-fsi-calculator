@@ -24,6 +24,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+LABEL org.opencontainers.image.source="https://github.com/drtinkerer/sdarchitects-udcpr-fsi-calculator"
+LABEL org.opencontainers.image.description="UDCPR FSI Calculator Pro - Architectural Practice SaaS"
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
