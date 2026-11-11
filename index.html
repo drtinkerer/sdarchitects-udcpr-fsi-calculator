@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UDCPR FSI Calculator - Architecture Business Utility</title>
+  <!-- Tailwind CSS via allowlisted CDN -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shake 0.35s ease-in-out;
+    }
+  </style>
+</head>
+<body class="blueprint-grid min-h-screen text-slate-800 antialiased flex flex-col justify-between">
+
+  <!-- Main Navigation Bar -->
+  <header id="mainNavbar" class="glass-panel sticky top-0 z-30 border-b border-slate-200 shadow-sm px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-lg shadow-sm border border-slate-700">
+        <svg class="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-slate-900 tracking-tight text-base sm:text-lg">UDCPR FSI Area Calculator</h1>
+          <span class="px-2 py-0.5 text-[11px] font-semibold bg-emerald-100 text-emerald-800 rounded-md border border-emerald-200">S D ARCHITECTS Standard</span>
+        </div>
+        <p class="text-xs text-slate-500">Google Sheets Protected Master Template Bridge • Directory Automator</p>
+      </div>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-3">
+      <div id="navDestinationPill" class="hidden md:flex items-center gap-1.5 px-3 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs font-medium text-slate-700">
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        <span id="navDestText">Google Drive</span>
+      </div>
+
+      <!-- Settings Button (Admin Protected) -->
+      <button id="btnOpenSettings" title="Admin Settings (Password Protected: 1760)" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition">
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span>Settings</span>
+        <span class="text-[10px] bg-slate-200 text-slate-600 px-1 py-0.2 rounded font-mono">1760</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- Information Status Banner -->
+    <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white rounded-2xl p-5 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded border border-emerald-500/30">Backend Master Templates Locked</span>
+          <span class="text-xs text-slate-300">• Live Synchronized Frontend</span>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold">UDCPR Standard FSI Calculation Interface</h2>
+        <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+          Operating with protected master templates: <strong>Regular Zone</strong> (UDCPR Table 6-A), <strong>TOD Zone</strong> (UDCPR Chapter 13), and <strong>CBD Zone</strong> (Commercial Core). Starting a project automatically generates an isolated folder formatted as <code class="bg-slate-800 px-1.5 py-0.5 rounded text-sky-300">[Date] - [Client Name] - [Project Name]</code> and strictly duplicates the selected master template.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 self-start md:self-center">
+        <span class="flex h-2.5 w-2.5 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <span class="text-xs font-medium text-emerald-300">Templates Connected</span>
+      </div>
+    </div>
+
+    <!-- MAIN INPUT SCREEN (Uncluttered, Minimalistic Dashboard) -->
+    <section id="inputSection" class="glass-panel rounded-2xl p-6 sm:p-8 shadow-sm">
+      <div class="border-b border-slate-200 pb-4 mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Project Parameters</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Enter statutory UDCPR parameters to calculate permissible FSI, TDR loading, and built-up areas.</p>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Parameters 1.0</span>
+      </div>
+
+      <form id="fsiMainForm" class="space-y-6" onsubmit="event.preventDefault();">
+        
+        <!-- ROW 1: Date, Client Name, Project Name -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div>
+            <label for="inputDate" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <span>Date <span class="text-rose-500">*</span></span>
+              <span class="text-[10px] text-sky-600 font-normal">Interactive Calendar</span>
+            </label>
+            <div class="relative flex items-center">
+              <input type="date" id="inputDate" required onclick="this.showPicker()"
+                class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 pr-10 text-sm text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm cursor-pointer">
+              <button type="button" onclick="document.getElementById('inputDate').showPicker()" title="Select date from calendar"
+                class="absolute right-2.5 p-1 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-slate-100 transition focus:outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="inputClientName" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Client Name <span class="text-rose-500">*</span>
+            </label>
+            <input type="text" id="inputClientName" placeholder="e.g. RIGHT FOUNDATION" value="RIGHT FOUNDATION" required
+              class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+          </div>
+
+          <div>
+            <label for="inputProjectName" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Project Name <span class="text-rose-500">*</span>
+            </label>
+            <input type="text" id="inputProjectName" placeholder="e.g. SALISBURY PARK" value="SALISBURY PARK" required
+              class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+          </div>
+        </div>
+
+        <!-- ROW 2: Plot Areas (7/12, Site Measurement, Road Widening) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div>
+            <label for="inputPlot712" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Plot Area (as per 7/12) <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <input type="number" id="inputPlot712" step="0.01" min="0" placeholder="0.00" value="2071.27" required
+                class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 pr-14 text-sm font-mono-num text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+              <span class="absolute right-3.5 top-2.5 text-xs font-medium text-slate-400 pointer-events-none">sq.m</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">From land revenue property card / extract (Row 1a)</p>
+          </div>
+
+          <div>
+            <label for="inputPlotSite" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Plot Area (Site Measurement) <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <input type="number" id="inputPlotSite" step="0.01" min="0" placeholder="0.00" value="2071.27" required
+                class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 pr-14 text-sm font-mono-num text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+              <span class="absolute right-3.5 top-2.5 text-xs font-medium text-slate-400 pointer-events-none">sq.m</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Actual physical survey / subdivision sheet (Row 1b)</p>
+          </div>
+
+          <div>
+            <label for="inputRoadWidening" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Plot under Road Widening
+            </label>
+            <div class="relative">
+              <input type="number" id="inputRoadWidening" step="0.01" min="0" placeholder="0.00 (allow zero/null)" value="171.10"
+                class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 pr-14 text-sm font-mono-num text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+              <span class="absolute right-3.5 top-2.5 text-xs font-medium text-slate-400 pointer-events-none">sq.m</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Area under proposed D.P. road widening (Row 2a)</p>
+          </div>
+        </div>
+
+        <!-- ROW 3: Road Width, Project Type, Green FSI Type -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div>
+            <label for="selectRoadWidth" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Road Width <span class="text-rose-500">*</span>
+            </label>
+            <select id="selectRoadWidth" required
+              class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+              <option value="w_6">6.00 m (Basic FSI only = 1.10 | TDR = 0.00)</option>
+              <option value="w_7_5">7.50 m (Basic FSI only = 1.10 | TDR = 0.00)</option>
+              <option value="w_9">9.00 m (TDR = 0.40 | Potential = 2.00)</option>
+              <option value="w_12">12.00 m (TDR = 0.65 | Potential = 2.25)</option>
+              <option value="w_15">15.00 m (TDR = 0.90 | Potential = 2.50)</option>
+              <option value="w_18">18.00 m (TDR = 0.90 | Potential = 2.50)</option>
+              <option value="w_21">21.00 m (TDR = 0.90 | Potential = 2.50)</option>
+              <option value="w_24" selected>24.00 m (TDR = 1.15 | Potential = 2.75)</option>
+              <option value="w_27">27.00 m (TDR = 1.15 | Potential = 2.75)</option>
+              <option value="w_30">30.00 m (TDR = 1.40 | Potential = 3.00)</option>
+              <option value="w_above_30">Above 30.00 m (TDR = 1.40 | Potential = 3.00)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="selectProjectType" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Project Type <span class="text-rose-500">*</span>
+            </label>
+            <select id="selectProjectType" required
+              class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+              <option value="residential" selected>Residential (60% Ancillary FSI)</option>
+              <option value="commercial">Commercial (80% Ancillary FSI)</option>
+              <option value="mix_use">Mix Use (70% Ancillary FSI)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="selectGreenFsi" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              Green FSI Type
+            </label>
+            <select id="selectGreenFsi"
+              class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm">
+              <option value="green_none">None / Baseline (0% Incentive)</option>
+              <option value="green_griha_3">GRIHA 3-Star / IGBC Silver (+3% of Basic FSI)</option>
+              <option value="green_griha_4" selected>GRIHA 4-Star / IGBC Gold (+5% of Basic FSI)</option>
+              <option value="green_griha_5">GRIHA 5-Star / IGBC Platinum (+7% of Basic FSI)</option>
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">GRIHA / IGBC certified ratings under UDCPR (Row 10e)</p>
+          </div>
+        </div>
+
+        <!-- ROW 4: Zone Selection (Routing Trigger to determine which Google Sheet template is duplicated) -->
+        <div class="pt-2">
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2.5">
+            Zone Selection (Routing Trigger: Determines Backend Google Sheet Template Duplicated) <span class="text-rose-500">*</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            
+            <!-- Option 1: Regular Zone -->
+            <label class="relative flex flex-col p-4 bg-white border-2 border-slate-200 hover:border-sky-400 rounded-xl cursor-pointer transition has-[:checked]:border-sky-600 has-[:checked]:bg-sky-50/50 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900">Regular Zone</span>
+                <input type="radio" name="zoneSelection" value="regular" checked class="w-4 h-4 text-sky-600 focus:ring-sky-500">
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Standard UDCPR Residential & Commercial Zone.</p>
+              <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="truncate">Master: <code>1oxSdBMpkK...</code></span>
+              </div>
+            </label>
+
+            <!-- Option 2: TOD Zone -->
+            <label class="relative flex flex-col p-4 bg-white border-2 border-slate-200 hover:border-purple-400 rounded-xl cursor-pointer transition has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900">TOD Zone</span>
+                <input type="radio" name="zoneSelection" value="tod" class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Transit Oriented Development Corridor (500m of Metro/BRTS).</p>
+              <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="truncate">Master: <code>1BqH4UBcsN...</code></span>
+              </div>
+            </label>
+
+            <!-- Option 3: CBD Zone -->
+            <label class="relative flex flex-col p-4 bg-white border-2 border-slate-200 hover:border-amber-400 rounded-xl cursor-pointer transition has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50/50 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900">CBD Zone</span>
+                <input type="radio" name="zoneSelection" value="cbd" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Central Business District / High intensity commercial core.</p>
+              <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="truncate">Master: <code>1YzlhYEzpC...</code></span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ACTION BUTTONS BAR -->
+    <section id="actionButtonsBar" class="glass-panel rounded-2xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        
+        <!-- Button 1: Generate / View Full Table (Expands UI to reveal full FSI calculation table) -->
+        <button id="btnGeneratePreview" type="button" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs tracking-wide shadow-md hover:shadow-lg transition">
+          <svg id="generateIcon" class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span id="btnGenerateText">Generate / View Full Table</span>
+          <svg id="btnExpandArrow" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+
+        <!-- Button 2: View / Edit in Google Sheets -->
+        <button id="btnViewEditTable" type="button" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-slate-800 font-semibold text-xs shadow-sm transition">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <span>View / Edit in Google Sheets</span>
+        </button>
+
+        <!-- Button 3: Expand / Attach Sheet -->
+        <button id="btnExpandAttach" type="button" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-slate-800 font-semibold text-xs shadow-sm transition">
+          <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          <span>Expand / Attach Sheet</span>
+        </button>
+
+        <!-- Auxiliary Action: Export to Excel (.xlsx) -->
+        <button id="btnExportExcel" type="button" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm transition">
+          <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Export to Excel (.xlsx)</span>
+        </button>
+      </div>
+
+      <!-- Button 4: Print to PDF -->
+      <button id="btnPrintPDF" type="button" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-700 hover:bg-sky-600 text-white font-semibold text-xs tracking-wide shadow-md hover:shadow-lg transition ml-auto">
+        <svg class="w-4 h-4 text-sky-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        <span>Print to PDF</span>
+      </button>
+    </section>
+
+    <!-- FULL FSI CALCULATION TABLE (HIDDEN BY DEFAULT - Expands via "Generate / View Full Table") -->
+    <section id="previewCard" class="hidden glass-panel rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      
+      <!-- Live Sync Header Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-2">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Live Synchronized with Working Google Sheet</span>
+          </span>
+          <span class="text-xs text-slate-500 hidden md:inline">Read-only live reflection of active calculation</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5 text-xs font-mono text-slate-500">
+            <span class="text-slate-400">Sheet Formulas:</span>
+            <span class="font-semibold text-slate-700">100% Parity</span>
+          </div>
+          <button id="btnCollapseTable" type="button" onclick="collapseFullTable()" title="Collapse Full Table" class="flex items-center gap-1 px-2.5 py-1 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+            <span>Hide Table</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Directory & Template Status Banner -->
+      <div id="previewDirBanner" class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl"></div>
+
+      <!-- Summary Metrics Cards -->
+      <div id="previewMetrics" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      
+      <!-- Full 53-Row Read-Only Calculation Table -->
+      <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <table class="w-full text-left fsi-table">
+          <thead>
+            <tr>
+              <th class="w-16 text-center">SR NO</th>
+              <th>DESCRIPTION</th>
+              <th class="w-48 text-center">EXCEL / GS FORMULA</th>
+              <th class="w-48 text-right">POTENTIAL</th>
+            </tr>
+          </thead>
+          <tbody id="previewTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Attached Auxiliary Sheets Container -->
+      <div id="attachedSheetsContainer"></div>
+    </section>
+
+    <!-- EXACT GOOGLE SHEET A4 PRINT SECTION -->
+    <section id="printSection" class="hidden print-page bg-white p-4"></section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="no-print mt-10 py-6 border-t border-slate-200 text-center text-xs text-slate-500 space-y-1">
+    <div>UDCPR FSI Business Utility • Developed for S D ARCHITECTS</div>
+    <div class="text-[11px] text-slate-400">Master Template Protection Guarantee: Templates remain locked and 100% unaltered.</div>
+  </footer>
+
+  <!-- ==================== MODALS & SECURITY ENGINE ==================== -->
+
+  <!-- 1. ADMIN SECURITY AUTHENTICATION MODAL -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Administrative Firewall</h3>
+          <p class="text-xs text-slate-500">Access to Settings & Directory Controls</p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label for="authPasswordInput" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Enter Admin Password</label>
+        <input type="password" id="authPasswordInput" placeholder="Master Password: 1760"
+          class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-center font-mono text-lg tracking-widest text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        <p id="authErrorMsg" class="hidden text-xs text-rose-600 font-medium">Incorrect master password. Access denied.</p>
+        <p class="text-[11px] text-slate-400">Default master password is <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-700">1760</code>.</p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button id="btnAuthCancel" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button id="btnAuthSubmit" type="button" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow">Unlock Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SETTINGS & DIRECTORY ENGINE MODAL -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 my-8 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center">
+            <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-lg">Settings & Directory Engine</h3>
+            <p class="text-xs text-slate-500">Routing Destinations, Interactive Path Picker & Template Config</p>
+          </div>
+        </div>
+        <button id="btnCloseSettings" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Save Destinations -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-900 uppercase tracking-wider">Default Project Destination</label>
+          <span class="text-[11px] text-slate-500">Folder Syntax: <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-700">[Date] - [Client Name] - [Project Name]</code></span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label class="flex flex-col p-3.5 bg-slate-50 border border-slate-300 rounded-xl cursor-pointer has-[:checked]:border-sky-600 has-[:checked]:bg-sky-50/60 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-900">Google Drive</span>
+              <input type="radio" name="settingDestination" value="gdrive" checked class="w-4 h-4 text-sky-600">
+            </div>
+            <span class="text-[11px] text-slate-500 mt-1">Google Workspace / Drive API</span>
+          </label>
+
+          <label class="flex flex-col p-3.5 bg-slate-50 border border-slate-300 rounded-xl cursor-pointer has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/60 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-900">Synology Drive</span>
+              <input type="radio" name="settingDestination" value="synology" class="w-4 h-4 text-purple-600">
+            </div>
+            <span class="text-[11px] text-slate-500 mt-1">NAS Webhook / FileStation REST</span>
+          </label>
+
+          <label class="flex flex-col p-3.5 bg-slate-50 border border-slate-300 rounded-xl cursor-pointer has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50/60 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-900">Local Computer Drive</span>
+              <input type="radio" name="settingDestination" value="local" class="w-4 h-4 text-emerald-600">
+            </div>
+            <span class="text-[11px] text-slate-500 mt-1">OS Directory / Filesystem</span>
+          </label>
+        </div>
+
+        <!-- Destination Details with Interactive Folder-Picker Buttons -->
+        <div id="tabGdriveContent" class="p-3.5 bg-sky-50/50 border border-sky-200 rounded-xl text-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="settingGdriveRoot" class="block font-semibold text-sky-950">Google Drive Destination Path</label>
+            <button type="button" onclick="openInteractiveFolderPicker('gdrive')" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-sky-600 hover:bg-sky-700 text-white font-medium text-[11px] shadow-sm transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              <span>Browse / Select Folder</span>
+            </button>
+          </div>
+          <input type="text" id="settingGdriveRoot" value="My Drive/AntiGravity/Projects"
+            class="w-full bg-white border border-sky-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800">
+          <p class="text-[11px] text-slate-500">Google Drive folder where project subfolders will be created.</p>
+        </div>
+
+        <div id="tabSynologyContent" class="hidden p-3.5 bg-purple-50/50 border border-purple-200 rounded-xl text-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <label for="settingSynoShared" class="block font-semibold text-purple-950">Synology NAS Shared Folder</label>
+            <button type="button" onclick="openInteractiveFolderPicker('synology')" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-600 hover:bg-purple-700 text-white font-medium text-[11px] shadow-sm transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              <span>Browse / Select Folder</span>
+            </button>
+          </div>
+          <input type="text" id="settingSynoShared" value="/volume1/ArchitectProjects"
+            class="w-full bg-white border border-purple-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800">
+          
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <div>
+              <label for="settingSynoApi" class="block font-semibold text-purple-950 mb-1">Synology WebAPI Endpoint</label>
+              <input type="text" id="settingSynoApi" value="https://synology.local:5001/webapi"
+                class="w-full bg-white border border-purple-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800">
+            </div>
+            <div>
+              <label for="settingSynoToken" class="block font-semibold text-purple-950 mb-1">API Token / Secret</label>
+              <input type="password" id="settingSynoToken" placeholder="••••••••••••"
+                class="w-full bg-white border border-purple-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800">
+            </div>
+          </div>
+        </div>
+
+        <div id="tabLocalContent" class="hidden p-3.5 bg-emerald-50/50 border border-emerald-200 rounded-xl text-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="settingLocalRoot" class="block font-semibold text-emerald-950">Local Drive Directory Path</label>
+            <button type="button" onclick="openInteractiveFolderPicker('local')" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-[11px] shadow-sm transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              <span>Browse / Select Folder</span>
+            </button>
+          </div>
+          <input type="text" id="settingLocalRoot" value="G:\My Drive\AntiGravity\Projects"
+            class="w-full bg-white border border-emerald-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-800">
+          <p class="text-[11px] text-slate-500">Local computer directory where project folders will be organized.</p>
+        </div>
+      </div>
+
+      <!-- "Ask Every Time" Toggle -->
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+        <div>
+          <div class="font-bold text-slate-900 text-xs sm:text-sm">"Ask Every Time" Toggle</div>
+          <div class="text-xs text-slate-500 mt-0.5">When active, overrides the default save path and triggers the interactive folder-picker dialogue box every time "Print to PDF" or "Generate" workflow initiates a save action.</div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer ml-4">
+          <input type="checkbox" id="settingAskEveryTime" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+        </label>
+      </div>
+
+      <!-- Base Google Sheet Templates (Protected) -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-900 uppercase tracking-wider">Base Google Sheet Templates (Protected Master Sources)</label>
+          <span class="inline-flex items-center text-[11px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Strict Parity Locked
+          </span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-medium text-slate-700">1. Regular Zone Master Template</span>
+              <a href="https://docs.google.com/spreadsheets/d/1oxSdBMpkKZoedKF_ZQML9VmnfFs9GCmezFbTRhJFK_U/edit?usp=drive_link" target="_blank" class="text-sky-600 hover:underline">Open in Sheets ↗</a>
+            </div>
+            <input type="text" id="settingTplRegular" value="https://docs.google.com/spreadsheets/d/1oxSdBMpkKZoedKF_ZQML9VmnfFs9GCmezFbTRhJFK_U/edit?usp=drive_link" readonly
+              class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-700 cursor-not-allowed">
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-medium text-slate-700">2. TOD Zone Master Template</span>
+              <a href="https://docs.google.com/spreadsheets/d/1BqH4UBcsN6e1pVYeBX7uv981Gz_ntjaZLJwppKHlFWU/edit?usp=drive_link" target="_blank" class="text-sky-600 hover:underline">Open in Sheets ↗</a>
+            </div>
+            <input type="text" id="settingTplTod" value="https://docs.google.com/spreadsheets/d/1BqH4UBcsN6e1pVYeBX7uv981Gz_ntjaZLJwppKHlFWU/edit?usp=drive_link" readonly
+              class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-700 cursor-not-allowed">
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-medium text-slate-700">3. CBD Zone Master Template</span>
+              <a href="https://docs.google.com/spreadsheets/d/1YzlhYEzpCDIfKuyP9H8Fwmk8PaARaoa54jFU22CruqQ/edit?usp=drive_link" target="_blank" class="text-sky-600 hover:underline">Open in Sheets ↗</a>
+            </div>
+            <input type="text" id="settingTplCbd" value="https://docs.google.com/spreadsheets/d/1YzlhYEzpCDIfKuyP9H8Fwmk8PaARaoa54jFU22CruqQ/edit?usp=drive_link" readonly
+              class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-700 cursor-not-allowed">
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Management -->
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+        <div>
+          <div class="font-bold text-slate-900 text-xs sm:text-sm">Admin Firewall & Credentials</div>
+          <div class="text-xs text-slate-500 mt-0.5">Master admin password controls access to Settings. Validation of current password required.</div>
+        </div>
+        <button id="btnOpenChangePwd" type="button" class="px-3.5 py-1.5 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-xs font-semibold rounded-lg shadow-sm">
+          Change Password
+        </button>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+        <button id="btnCancelSettings" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button id="btnSaveSettings" type="button" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. INTERACTIVE NATIVE FOLDER-PICKER DIALOGUE BOX (OS-Level Visual Navigator) -->
+  <div id="folderPickerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-6">
+      
+      <!-- Dialogue Header -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Select Destination Directory</h3>
+            <p id="pickerDestLabel" class="text-xs text-slate-500">Interactive Native Directory Dialogue</p>
+          </div>
+        </div>
+        <button id="btnCloseFolderPicker" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick Platform Switcher -->
+      <div class="flex items-center gap-2 border-b border-slate-100 pb-2 text-xs">
+        <button type="button" onclick="switchPickerTarget('gdrive')" id="pickerTabGdrive" class="px-3 py-1.5 rounded-lg font-semibold bg-sky-100 text-sky-800">Google Drive</button>
+        <button type="button" onclick="switchPickerTarget('synology')" id="pickerTabSynology" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100">Synology Drive</button>
+        <button type="button" onclick="switchPickerTarget('local')" id="pickerTabLocal" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100">Local Computer Drive</button>
+      </div>
+
+      <!-- Current Path Breadcrumbs Bar -->
+      <div class="flex items-center justify-between bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs">
+        <div class="flex items-center gap-1 overflow-x-auto" id="pickerBreadcrumbs">
+          <!-- Dynamic Breadcrumbs rendered here -->
+        </div>
+        <button type="button" onclick="pickerNavigateUp()" title="Up One Level" class="p-1 rounded hover:bg-slate-200 text-slate-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+        </button>
+      </div>
+
+      <!-- Interactive Directory Tree & Folder List Container -->
+      <div class="folder-picker-browser border border-slate-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto">
+        <div id="pickerFolderList" class="p-2 space-y-1">
+          <!-- Dynamically populated folder nodes -->
+        </div>
+      </div>
+
+      <!-- Action & Creation Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="pickerCreateNewFolder()" class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>New Folder</span>
+          </button>
+
+          <!-- Modern Browser File System Access API Trigger for Local Drive -->
+          <button type="button" id="btnNativeOsPicker" onclick="pickNativeOsDirectory()" class="hidden items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-300 hover:bg-emerald-100 text-emerald-800 font-medium">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span>Open Windows Explorer Dialogue</span>
+          </button>
+        </div>
+
+        <div class="text-[11px] text-slate-500 font-mono">
+          Selected: <span id="pickerActiveDisplay" class="font-semibold text-slate-800">My Drive/AntiGravity/Projects</span>
+        </div>
+      </div>
+
+      <!-- Target Folder Preview Display -->
+      <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+        <div class="text-slate-500">Automated Project Parent Folder syntax:</div>
+        <div id="pickerPreviewProjectFolder" class="font-bold font-mono text-slate-900 text-sm">
+          [Date] - [Client Name] - [Project Name]
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button id="btnCancelFolderPicker" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button id="btnConfirmFolderPicker" type="button" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow">Designate This Path</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. CHANGE PASSWORD UTILITY MODAL -->
+  <div id="changePasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+          <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-900 text-base">Change Admin Password</h4>
+          <p class="text-xs text-slate-500">Requires validation of current password</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label for="pwdCurrent" class="block font-semibold text-slate-700 mb-1">Current Password <span class="text-rose-500">*</span></label>
+          <input type="password" id="pwdCurrent" placeholder="Enter current admin password (1760)"
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label for="pwdNew" class="block font-semibold text-slate-700 mb-1">New Admin Password <span class="text-rose-500">*</span></label>
+          <input type="password" id="pwdNew" placeholder="Min 4 characters"
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label for="pwdConfirm" class="block font-semibold text-slate-700 mb-1">Confirm New Password <span class="text-rose-500">*</span></label>
+          <input type="password" id="pwdConfirm" placeholder="Re-enter new password"
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <p id="pwdErrorMsg" class="hidden text-xs text-rose-600 font-medium"></p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button id="btnCancelNewPwd" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button id="btnSubmitNewPwd" type="button" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. "ASK EVERY TIME" ROUTING MODAL -->
+  <div id="askDestinationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Select Save Destination</h3>
+          <p class="text-xs text-slate-500">Prompting per "Ask Every Time" Configuration</p>
+        </div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+        <span class="text-slate-500">Automated Parent Folder:</span>
+        <div id="modalTargetFolder" class="font-bold font-mono text-slate-900 text-sm"></div>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <label class="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 has-[:checked]:border-sky-600 has-[:checked]:bg-sky-50/60">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-800">Google Drive</span>
+            <span class="text-slate-400">• Cloud Sheets</span>
+          </div>
+          <input type="radio" name="modalSaveChoice" value="gdrive" checked class="w-4 h-4 text-sky-600">
+        </label>
+
+        <label class="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/60">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-800">Synology Drive</span>
+            <span class="text-slate-400">• NAS Webhook/API</span>
+          </div>
+          <input type="radio" name="modalSaveChoice" value="synology" class="w-4 h-4 text-purple-600">
+        </label>
+
+        <label class="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50/60">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-800">Local Computer Drive</span>
+            <span class="text-slate-400">• File System</span>
+          </div>
+          <input type="radio" name="modalSaveChoice" value="local" class="w-4 h-4 text-emerald-600">
+        </label>
+      </div>
+
+      <!-- Optional folder picker trigger button inside "Ask Every Time" modal -->
+      <div class="pt-1">
+        <button type="button" onclick="openInteractiveFolderPickerFromModal()" class="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 text-xs font-semibold transition">
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          <span>Browse / Pick Custom Directory...</span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button id="btnCancelDestination" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button id="btnConfirmDestination" type="button" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow">Confirm & Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. VIEW / EDIT IN GOOGLE SHEETS (Interactive Grid & Formula Audit Modal) -->
+  <div id="gridModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl border border-slate-200 my-8 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-100 text-sky-800">Duplicated Working Sheet</span>
+            <h3 id="gridWorkingFileName" class="font-bold text-slate-900 text-base">Project Working Sheet Grid</h3>
+          </div>
+          <p id="gridWorkingFilePath" class="text-xs text-slate-500 font-mono mt-0.5"></p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="gridDeepLinkBtn" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span>Open in Google Sheets ↗</span>
+          </button>
+          <button id="btnCloseGrid" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Editing the <strong>isolated working project copy</strong>. Original master templates remain write-protected. Formulas can be inspected and manual overrides applied below.</span>
+        </div>
+        <button type="button" onclick="resetManualOverrides()" class="flex-shrink-0 text-[11px] underline font-semibold text-amber-900 hover:text-amber-950">Reset Overrides</button>
+      </div>
+
+      <div class="border border-slate-300 rounded-xl overflow-x-auto max-h-[50vh]">
+        <table class="sheet-grid">
+          <thead>
+            <tr>
+              <th class="w-12 py-2">Row</th>
+              <th class="w-16">Item</th>
+              <th class="text-left px-3">Description</th>
+              <th class="w-48 text-right px-3">Potential (Editable Override)</th>
+              <th class="w-48 text-left px-3">Underlying Formula</th>
+            </tr>
+          </thead>
+          <tbody id="gridTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
+        <span class="text-slate-500">Live sync active with project working directory.</span>
+        <button onclick="closeGridModal()" class="px-4 py-2 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800">Done Editing</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. EXPAND / ATTACH SHEET MODAL (Additional Zone Templates & Auxiliary Tabs) -->
+  <div id="expandModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Expand / Attach Sheet</h3>
+            <p class="text-xs text-slate-500">Attach an additional zone template or auxiliary sheet to the working file</p>
+          </div>
+        </div>
+        <button id="btnCloseExpand" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Section A: Additional Zone Templates -->
+      <div class="space-y-2 text-xs">
+        <div class="font-bold text-slate-700 uppercase tracking-wider text-[11px]">1. Additional Zone Templates (Appended as New Tab)</div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button type="button" onclick="attachAuxiliarySheet('zone_regular')" class="p-2.5 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl text-left transition">
+            <div class="font-bold text-sky-950">Regular Zone Tab</div>
+            <div class="text-[10px] text-sky-700">Table 6-A standard</div>
+          </button>
+
+          <button type="button" onclick="attachAuxiliarySheet('zone_tod')" class="p-2.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl text-left transition">
+            <div class="font-bold text-purple-950">TOD Zone Tab</div>
+            <div class="text-[10px] text-purple-700">Metro/BRTS 500m corridor</div>
+          </button>
+
+          <button type="button" onclick="attachAuxiliarySheet('zone_cbd')" class="p-2.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl text-left transition">
+            <div class="font-bold text-amber-950">CBD Zone Tab</div>
+            <div class="text-[10px] text-amber-700">Commercial core district</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section B: Auxiliary Regulation Sheets -->
+      <div class="space-y-2 text-xs pt-1">
+        <div class="font-bold text-slate-700 uppercase tracking-wider text-[11px]">2. Auxiliary Regulation Tabs</div>
+
+        <button type="button" onclick="attachAuxiliarySheet('tod_transit')" class="w-full text-left p-3 bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-300 rounded-xl transition flex items-start gap-3">
+          <span class="text-xl">🚊</span>
+          <div>
+            <div class="font-bold text-slate-900">TOD Transit Impact & Pedestrian Catchment Tab</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Calculates 500m pedestrian shed, transit frequency, and TOD surcharge premium schedule.</div>
+          </div>
+        </button>
+
+        <button type="button" onclick="attachAuxiliarySheet('fungible_breakdown')" class="w-full text-left p-3 bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-300 rounded-xl transition flex items-start gap-3">
+          <span class="text-xl">📐</span>
+          <div>
+            <div class="font-bold text-slate-900">Ancillary & Fungible Area Itemized Breakdown</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Floor-wise distribution of 60%/80% fungible FSI across balconies, utility corridors, and terraces.</div>
+          </div>
+        </button>
+
+        <button type="button" onclick="attachAuxiliarySheet('parking_matrix')" class="w-full text-left p-3 bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-300 rounded-xl transition flex items-start gap-3">
+          <span class="text-xl">🚗</span>
+          <div>
+            <div class="font-bold text-slate-900">UDCPR Parking, Basement & Fire Core Matrix (Table 6-J)</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Automates Table 6-J calculations: 2-wheeler/4-wheeler slots, turning radiuses, ramp slopes & refuge floors.</div>
+          </div>
+        </button>
+
+        <button type="button" onclick="attachAuxiliarySheet('special_building')" class="w-full text-left p-3 bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-300 rounded-xl transition flex items-start gap-3">
+          <span class="text-xl">🏢</span>
+          <div>
+            <div class="font-bold text-slate-900">Special Building & High-Rise Clearance Schedule</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">UDCPR Rule 6.2 special building norms, marginal open spaces, fire tender access & setbacks.</div>
+          </div>
+        </button>
+      </div>
+
+      <div class="pt-2 text-right">
+        <button onclick="closeExpandModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Pill -->
+  <div id="appNotificationToast" class="hidden fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl shadow-xl border flex items-center gap-3 transition-all transform duration-300 bg-slate-900 text-white border-slate-700">
+    <svg class="w-5 h-5 text-sky-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <div id="toastMessageText" class="text-xs font-medium">Notification message</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+*.bat
+legacy
+README.md
+TESTING_GUIDE.md
+UDCPR-FSI-Calculator-Standalone.html
+app.js
+index.html
+styles.css

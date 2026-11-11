@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  udcpr-fsi-calculator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: udcpr_fsi_calculator_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000

@@ -1,0 +1,311 @@
+/* UDCPR FSI Calculator - Architectural Design System Stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sheet: 'Google Sans', 'Plus Jakarta Sans', Arial, sans-serif;
+  --grid-line-color: rgba(148, 163, 184, 0.08);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+/* Blueprint Graph Paper Background Effect */
+.blueprint-grid {
+  background-image: 
+    linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+/* Glassmorphism Cards */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Interactive Table Styling */
+.fsi-table th {
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  font-size: 0.725rem;
+  padding: 8px 12px;
+}
+
+.fsi-table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.825rem;
+}
+
+.fsi-table tr:hover {
+  background-color: #f0fdf4;
+}
+
+/* Exact Google Sheet Table Layout */
+.gsheet-print-table {
+  font-family: var(--font-sheet);
+  border-collapse: collapse;
+  width: 100%;
+  border: 1.5px solid #64748b;
+  background-color: #ffffff;
+}
+
+.gsheet-print-table th,
+.gsheet-print-table td {
+  border: 1px solid #cbd5e1;
+  padding: 4.5px 8px;
+  font-size: 9.5pt;
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.gsheet-header-row {
+  background-color: #f0f4f9 !important;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+}
+
+.gsheet-section-row {
+  background-color: #f8fafc !important;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.gsheet-highlight-row {
+  background-color: #edf2f6 !important;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.gsheet-grand-total {
+  background-color: #dbe6f2 !important;
+  font-weight: 800;
+  color: #0f172a;
+  border-top: 1.5px solid #475569 !important;
+  border-bottom: 3px double #0f172a !important;
+}
+
+/* Interactive Folder Picker Modal Styles */
+.folder-picker-browser {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.folder-crumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.folder-crumb-item:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.folder-tree-node {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+.folder-tree-node:hover {
+  background-color: #f1f5f9;
+}
+
+.folder-tree-node.is-selected {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.folder-tree-node svg {
+  flex-shrink: 0;
+}
+
+/* Transition for Full Table container */
+#previewCard {
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+
+.gsheet-footer-disclaimer {
+  font-size: 8pt !important;
+  color: #64748b;
+  font-style: italic;
+  padding: 6px 8px;
+  background-color: #fafafa;
+  border-top: 1px solid #94a3b8;
+}
+
+/* Editable Grid View */
+.sheet-grid {
+  border-collapse: collapse;
+  width: 100%;
+}
+.sheet-grid th {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  text-align: center;
+  user-select: none;
+}
+.sheet-grid td {
+  border: 1px solid #e2e8f0;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background: #ffffff;
+}
+.sheet-grid td.row-num {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.75rem;
+  text-align: center;
+  font-weight: 500;
+  width: 40px;
+}
+.sheet-grid input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+.sheet-grid td:focus-within {
+  outline: 2px solid #0284c7;
+  outline-offset: -2px;
+  background-color: #f0f9ff;
+}
+
+/* Print to PDF Strict A4 Layout (Matching Google Sheets Print) */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm 8mm 10mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 9pt !important;
+    font-family: 'Google Sans', 'Plus Jakarta Sans', Arial, sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .no-print,
+  #mainNavbar,
+  #inputSection,
+  #actionButtonsBar,
+  #previewCard,
+  #settingsModal,
+  #authModal,
+  #changePasswordModal,
+  #gridModal,
+  #expandModal,
+  #askDestinationModal,
+  #appNotificationToast,
+  footer {
+    display: none !important;
+  }
+
+  #printSection {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .print-page {
+    page-break-after: auto;
+    page-break-inside: avoid;
+  }
+
+  .gsheet-print-table {
+    border: 1.5px solid #000000 !important;
+    width: 100% !important;
+  }
+
+  .gsheet-print-table th,
+  .gsheet-print-table td {
+    border: 1px solid #475569 !important;
+    font-size: 8.5pt !important;
+    padding: 3.5px 6px !important;
+    line-height: 1.2 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .gsheet-header-row {
+    background-color: #f0f4f9 !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .gsheet-section-row {
+    background-color: #f8fafc !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .gsheet-highlight-row {
+    background-color: #edf2f6 !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .gsheet-grand-total {
+    background-color: #dbe6f2 !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+}

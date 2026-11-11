@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Synology Drive & Webhook Integration Specification",
+  "version": "1.0.0",
+  "description": "API payload structure and webhook events for automated folder creation and PDF archival on Synology DSM File Station",
+  "endpoints": {
+    "createFolder": {
+      "path": "/webapi/entry.cgi",
+      "method": "POST",
+      "api": "SYNO.FileStation.CreateFolder",
+      "version": "2",
+      "params": {
+        "folder_path": "/volume1/ArchitectProjects",
+        "name": "[Client Name] - [Project Name]",
+        "force_parent": true
+      }
+    },
+    "uploadPdf": {
+      "path": "/webapi/entry.cgi",
+      "method": "POST",
+      "api": "SYNO.FileStation.Upload",
+      "version": "2",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "params": {
+        "path": "/volume1/ArchitectProjects/[Client Name] - [Project Name]",
+        "create_parents": true,
+        "overwrite": true
+      }
+    }
+  },
+  "webhookEvent": {
+    "event": "PROJECT_FSI_GENERATED",
+    "timestamp": "2026-11-11T10:00:00Z",
+    "project": {
+      "clientName": "Acme Realty Ltd.",
+      "projectName": "Horizon Towers",
+      "folderName": "Acme Realty Ltd. - Horizon Towers",
+      "zone": "regular",
+      "netPlotArea": 2360.00,
+      "totalPermissibleFsi": 2.10,
+      "grossPermissibleBua": 4956.00,
+      "totalPotentialBua": 6690.60
+    }
+  }
+}
