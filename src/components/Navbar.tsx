@@ -1,23 +1,25 @@
 'use client';
 
 import React from 'react';
-import { Building2, FileDown } from 'lucide-react';
+import { Building2, FileDown, Loader2 } from 'lucide-react';
 import { ZoneType } from '@/lib/types/udcpr';
 import { MASTER_TEMPLATES } from '@/lib/udcpr/constants';
 
 interface NavbarProps {
   zone: ZoneType;
-  onExportPdf: () => void;
+  isExporting: boolean;
+  onGeneratePdf: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   zone,
-  onExportPdf,
+  isExporting,
+  onGeneratePdf,
 }) => {
   const currentTpl = MASTER_TEMPLATES[zone];
 
   return (
-    <header className="glass-panel sticky top-0 z-30 border-b border-slate-200 px-4 sm:px-6 py-3 shadow-sm no-print">
+    <header className="glass-panel sticky top-0 z-30 border-b border-slate-200 px-4 sm:px-6 py-3 shadow-sm">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Left branding */}
         <div className="flex items-center gap-3">
@@ -39,15 +41,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Action Controls */}
         <div className="flex flex-wrap items-center gap-2">
-
-          {/* Sole Export PDF Button */}
           <button
-            onClick={onExportPdf}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition transform hover:scale-[1.02]"
-            title="Export clean 1-page A4 PDF Statement"
+            type="button"
+            onClick={onGeneratePdf}
+            disabled={isExporting}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-semibold shadow-sm transition transform hover:scale-[1.02]"
+            title="Generate Sheet & PDF via n8n workflow"
           >
-            <FileDown className="w-4 h-4 text-sky-400" />
-            <span>Export PDF</span>
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
+            ) : (
+              <FileDown className="w-4 h-4 text-sky-400" />
+            )}
+            <span>{isExporting ? 'Generating PDF...' : 'Generate PDF (n8n)'}</span>
           </button>
         </div>
       </div>
