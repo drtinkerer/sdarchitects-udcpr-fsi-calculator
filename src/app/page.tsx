@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { ProjectFormData, RowOverrides } from '@/lib/types/udcpr';
-import { DEFAULT_FORM_DATA } from '@/lib/udcpr/constants';
+import { DEFAULT_FORM_DATA, getTodayLocalIsoDate } from '@/lib/udcpr/constants';
 import { calculateZone } from '@/lib/udcpr/calculator';
 import { generateRowsForZone } from '@/lib/udcpr/rows';
 
@@ -45,16 +45,20 @@ export default function Home() {
   const [exportResult, setExportResult] = useState<ExportResult | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
 
-  // Load saved state from localStorage
+  // Load saved state from localStorage, always defaulting date to today
   useEffect(() => {
+    const today = getTodayLocalIsoDate();
     try {
       const savedForm = localStorage.getItem(STORAGE_KEY_FORM);
       if (savedForm) {
-        setFormData(prev => ({ ...prev, ...JSON.parse(savedForm) }));
+        const parsed = JSON.parse(savedForm);
+        setFormData(prev => ({ ...prev, ...parsed, date: today }));
+        return;
       }
     } catch (e) {
       console.warn('Failed to load local storage state:', e);
     }
+    setFormData(prev => ({ ...prev, date: today }));
   }, []);
 
   // Save changes to localStorage

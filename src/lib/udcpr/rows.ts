@@ -1,7 +1,7 @@
 import { ProjectFormData, CalculationResult, TableRowItem, RowOverrides } from '../types/udcpr';
 
 export function formatDateDisplay(isoDateString?: string): string {
-  if (!isoDateString) return '11.11.2026';
+  if (!isoDateString) return '';
   const parts = isoDateString.split('-');
   if (parts.length === 3) {
     return `${parts[2]}.${parts[1]}.${parts[0]}`;
@@ -24,6 +24,8 @@ export function generateRegularRows(formData: ProjectFormData, calc: Calculation
   const dateDisplay = formatDateDisplay(formData.date);
   const projTypeDisplay = getProjectTypeDisplay(formData.projectType);
   const tdrFactor = calc.tdrFactor ?? 0.90;
+  const openSpaceOverride = (Number(formData.openSpaceArea) || 0) > 0;
+  const amenityOverride = (Number(formData.amenityArea) || 0) > 0;
   const potentialFactor = calc.potentialFactor;
   const ancillaryFactor = calc.ancillaryFactor;
 
@@ -43,10 +45,10 @@ export function generateRegularRows(formData: ProjectFormData, calc: Calculation
     { r: 13, a: '3.0', b: 'GROSS NET PLOT AREA [SR. NO. 1c - SR. NO. 2c]', c: calc.c13.toFixed(2), formula: '=C8-C12', r1c1: '=R8C3-R12C3', isHighlight: true },
     { r: 14, a: '4.0', b: 'OPEN SPACE', c: '', isSection: true, formula: '' },
     { r: 15, a: 'a]', b: 'REQUIRED OPEN SPACE [10% OF SR. NO. 3]', c: calc.c15.toFixed(2), formula: '=IF(C13>3999.99,C13*10%,0)', r1c1: '=IF(R13C3>3999.99,R13C3*0.1,0)' },
-    { r: 16, a: 'b]', b: 'PROPOSED OPEN SPACE [SR. NO. 4a]', c: calc.c16.toFixed(2), formula: '=C15', r1c1: '=R15C3' },
+    { r: 16, a: 'b]', b: 'PROPOSED OPEN SPACE [SR. NO. 4a]', c: calc.c16.toFixed(2), formula: openSpaceOverride ? 'INPUT (C16)' : '=C15', r1c1: openSpaceOverride ? '' : '=R15C3' },
     { r: 17, a: '5.0', b: 'AMENITY SPACE', c: '', isSection: true, formula: '' },
     { r: 18, a: 'a]', b: 'REQUIRED AMENITY SPACE [5% OF SR. NO. 3]', c: calc.c18.toFixed(2), formula: '=IF(C13>19999.99,C13*5%,0)', r1c1: '=IF(R13C3>19999.99,R13C3*0.05,0)' },
-    { r: 19, a: 'b]', b: 'PROPOSED AMENITY SPACE [SR. NO. 5a]', c: calc.c19.toFixed(2), formula: '=C18', r1c1: '=R18C3' },
+    { r: 19, a: 'b]', b: 'PROPOSED AMENITY SPACE [SR. NO. 5a]', c: calc.c19.toFixed(2), formula: amenityOverride ? 'INPUT (C19)' : '=C18', r1c1: amenityOverride ? '' : '=R18C3' },
     { r: 20, a: '6.0', b: 'SERVICE ROAD AND HIGHWAY WIDENING', c: calc.c20.toFixed(2), formula: '0.00', r1c1: '' },
     { r: 21, a: '7.0', b: 'INTERNAL ROAD AREA', c: calc.c21.toFixed(2), formula: '0.00', r1c1: '' },
     { r: 22, a: '8.0', b: 'NET AREA OF THE PLOT [SR. NO. 3 - SR. NO. 5b]', c: calc.c22.toFixed(2), formula: '=C13-C19', r1c1: '=R13C3-R19C3', isHighlight: true },
@@ -83,7 +85,13 @@ export function generateRegularRows(formData: ProjectFormData, calc: Calculation
     { r: 53, a: '*Above area calculation as per our understanding. Needs confirmation from Liaisoning Architect/Consultant.                                                         Prepared by: S D ARCHITECTS', b: '', c: '', isDisclaimer: true, spanABC: true, formula: '' }
   ];
 
-  return rows.map(r => ({ ...r, isOverridden: overrides[r.r] !== undefined }));
+  return rows.map(r => ({
+    ...r,
+    isOverridden:
+      overrides[r.r] !== undefined ||
+      (r.r === 16 && (Number(formData.openSpaceArea) || 0) > 0) ||
+      (r.r === 19 && (Number(formData.amenityArea) || 0) > 0),
+  }));
 }
 
 export function generateTODRows(formData: ProjectFormData, calc: CalculationResult, overrides: RowOverrides = {}): TableRowItem[] {
@@ -92,6 +100,8 @@ export function generateTODRows(formData: ProjectFormData, calc: CalculationResu
   const dateDisplay = formatDateDisplay(formData.date);
   const projTypeDisplay = getProjectTypeDisplay(formData.projectType);
   const todAddFactor = calc.todAddFactor ?? 0;
+  const openSpaceOverride = (Number(formData.openSpaceArea) || 0) > 0;
+  const amenityOverride = (Number(formData.amenityArea) || 0) > 0;
   const potentialFactor = calc.potentialFactor;
   const ancillaryFactor = calc.ancillaryFactor;
 
@@ -111,10 +121,10 @@ export function generateTODRows(formData: ProjectFormData, calc: CalculationResu
     { r: 13, a: '3.0', b: 'GROSS NET PLOT AREA [SR. NO. 1c - SR. NO. 2c]', c: calc.c13.toFixed(2), formula: '=C8-C12', r1c1: '=R8C3-R12C3', isHighlight: true },
     { r: 14, a: '4.0', b: 'OPEN SPACE', c: '', isSection: true, formula: '' },
     { r: 15, a: 'a]', b: 'REQUIRED OPEN SPACE [10% OF SR. NO. 3]', c: calc.c15.toFixed(2), formula: '=IF(C13>3999.99,C13*10%,0)', r1c1: '=IF(R13C3>3999.99,R13C3*0.1,0)' },
-    { r: 16, a: 'b]', b: 'PROPOSED OPEN SPACE [SR. NO. 4a]', c: calc.c16.toFixed(2), formula: '=C15', r1c1: '=R15C3' },
+    { r: 16, a: 'b]', b: 'PROPOSED OPEN SPACE [SR. NO. 4a]', c: calc.c16.toFixed(2), formula: openSpaceOverride ? 'INPUT (C16)' : '=C15', r1c1: openSpaceOverride ? '' : '=R15C3' },
     { r: 17, a: '5.0', b: 'AMENITY SPACE', c: '', isSection: true, formula: '' },
     { r: 18, a: 'a]', b: 'REQUIRED AMENITY SPACE [5% OF SR. NO. 3]', c: calc.c18.toFixed(2), formula: '=IF(C13>19999.99,C13*5%,0)', r1c1: '=IF(R13C3>19999.99,R13C3*0.05,0)' },
-    { r: 19, a: 'b]', b: 'PROPOSED AMENITY SPACE [SR. NO. 5a]', c: calc.c19.toFixed(2), formula: '=C18', r1c1: '=R18C3' },
+    { r: 19, a: 'b]', b: 'PROPOSED AMENITY SPACE [SR. NO. 5a]', c: calc.c19.toFixed(2), formula: amenityOverride ? 'INPUT (C19)' : '=C18', r1c1: amenityOverride ? '' : '=R18C3' },
     { r: 20, a: '6.0', b: 'SERVICE ROAD AND HIGHWAY WIDENING', c: calc.c20.toFixed(2), formula: '0.00', r1c1: '' },
     { r: 21, a: '7.0', b: 'INTERNAL ROAD AREA', c: calc.c21.toFixed(2), formula: '0.00', r1c1: '' },
     { r: 22, a: '8.0', b: 'NET AREA OF THE PLOT [SR. NO. 3 - SR. NO. 5b]', c: calc.c22.toFixed(2), formula: '=C13-C19', r1c1: '=R13C3-R19C3', isHighlight: true },
@@ -144,7 +154,13 @@ export function generateTODRows(formData: ProjectFormData, calc: CalculationResu
     { r: 46, a: '*Above area calculation as per our understanding. Needs confirmation from Liaisoning Architect/Consultant.                                                         Prepared by: S D ARCHITECTS', b: '', c: '', isDisclaimer: true, spanABC: true, formula: '' }
   ];
 
-  return rows.map(r => ({ ...r, isOverridden: overrides[r.r] !== undefined }));
+  return rows.map(r => ({
+    ...r,
+    isOverridden:
+      overrides[r.r] !== undefined ||
+      (r.r === 16 && (Number(formData.openSpaceArea) || 0) > 0) ||
+      (r.r === 19 && (Number(formData.amenityArea) || 0) > 0),
+  }));
 }
 
 export function generateCBDRows(formData: ProjectFormData, calc: CalculationResult, overrides: RowOverrides = {}): TableRowItem[] {
@@ -153,6 +169,8 @@ export function generateCBDRows(formData: ProjectFormData, calc: CalculationResu
   const dateDisplay = formatDateDisplay(formData.date);
   const projTypeDisplay = getProjectTypeDisplay(formData.projectType);
   const cbdTdrFactor = calc.cbdTdrFactor ?? 0.90;
+  const openSpaceOverride = (Number(formData.openSpaceArea) || 0) > 0;
+  const amenityOverride = (Number(formData.amenityArea) || 0) > 0;
   const cbdAddFactor = calc.cbdAddFactor ?? 0;
   const potentialFactor = calc.potentialFactor;
   const ancillaryFactor = calc.ancillaryFactor;
@@ -173,10 +191,10 @@ export function generateCBDRows(formData: ProjectFormData, calc: CalculationResu
     { r: 13, a: '3.0', b: 'GROSS NET PLOT AREA [SR. NO. 1c - SR. NO. 2c]', c: calc.c13.toFixed(2), formula: '=C8-C12', r1c1: '=R8C3-R12C3', isHighlight: true },
     { r: 14, a: '4.0', b: 'OPEN SPACE', c: '', isSection: true, formula: '' },
     { r: 15, a: 'a]', b: 'REQUIRED OPEN SPACE [10% OF SR. NO. 3]', c: calc.c15.toFixed(2), formula: '=IF(C13>3999.99,C13*10%,0)', r1c1: '=IF(R13C3>3999.99,R13C3*0.1,0)' },
-    { r: 16, a: 'b]', b: 'PROPOSED OPEN SPACE [SR. NO. 4a]', c: calc.c16.toFixed(2), formula: '=C15', r1c1: '=R15C3' },
+    { r: 16, a: 'b]', b: 'PROPOSED OPEN SPACE [SR. NO. 4a]', c: calc.c16.toFixed(2), formula: openSpaceOverride ? 'INPUT (C16)' : '=C15', r1c1: openSpaceOverride ? '' : '=R15C3' },
     { r: 17, a: '5.0', b: 'AMENITY SPACE', c: '', isSection: true, formula: '' },
     { r: 18, a: 'a]', b: 'REQUIRED AMENITY SPACE [5% OF SR. NO. 3]', c: calc.c18.toFixed(2), formula: '=IF(C13>19999.99,C13*5%,0)', r1c1: '=IF(R13C3>19999.99,R13C3*0.05,0)' },
-    { r: 19, a: 'b]', b: 'PROPOSED AMENITY SPACE [SR. NO. 5a]', c: calc.c19.toFixed(2), formula: '=C18', r1c1: '=R18C3' },
+    { r: 19, a: 'b]', b: 'PROPOSED AMENITY SPACE [SR. NO. 5a]', c: calc.c19.toFixed(2), formula: amenityOverride ? 'INPUT (C19)' : '=C18', r1c1: amenityOverride ? '' : '=R18C3' },
     { r: 20, a: '6.0', b: 'SERVICE ROAD AND HIGHWAY WIDENING', c: calc.c20.toFixed(2), formula: '0.00', r1c1: '' },
     { r: 21, a: '7.0', b: 'INTERNAL ROAD AREA', c: calc.c21.toFixed(2), formula: '0.00', r1c1: '' },
     { r: 22, a: '8.0', b: 'NET AREA OF THE PLOT [SR. NO. 3 - SR. NO. 5b]', c: calc.c22.toFixed(2), formula: '=C13-C19', r1c1: '=R13C3-R19C3', isHighlight: true },
@@ -206,7 +224,13 @@ export function generateCBDRows(formData: ProjectFormData, calc: CalculationResu
     { r: 46, a: '*Above area calculation as per our understanding. Needs confirmation from Liaisoning Architect/Consultant.                                                         Prepared by: S D ARCHITECTS', b: '', c: '', isDisclaimer: true, spanABC: true, formula: '' }
   ];
 
-  return rows.map(r => ({ ...r, isOverridden: overrides[r.r] !== undefined }));
+  return rows.map(r => ({
+    ...r,
+    isOverridden:
+      overrides[r.r] !== undefined ||
+      (r.r === 16 && (Number(formData.openSpaceArea) || 0) > 0) ||
+      (r.r === 19 && (Number(formData.amenityArea) || 0) > 0),
+  }));
 }
 
 export function generateRowsForZone(formData: ProjectFormData, calc: CalculationResult, overrides: RowOverrides = {}): TableRowItem[] {

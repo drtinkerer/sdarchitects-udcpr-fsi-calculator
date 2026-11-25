@@ -232,6 +232,14 @@
           <label class="lbl" for="dpReservation">D.P. Reservation / Green Belt</label>
           <input type="number" id="dpReservation" step="0.01" min="0" inputmode="decimal" value="0" />
         </div>
+        <div class="field">
+          <label class="lbl" for="openSpaceArea">Open Space Area (0 = Auto)</label>
+          <input type="number" id="openSpaceArea" step="0.01" min="0" inputmode="decimal" value="0.00" />
+        </div>
+        <div class="field">
+          <label class="lbl" for="amenityArea">Amenity Area (0 = Auto)</label>
+          <input type="number" id="amenityArea" step="0.01" min="0" inputmode="decimal" value="0.00" />
+        </div>
       </div>
     </div>
 
@@ -334,6 +342,8 @@
       var plotSiteEl = document.getElementById('plotAreaSite');
       var roadWidenEl = document.getElementById('roadWidening');
       var dpEl = document.getElementById('dpReservation');
+      var openSpaceEl = document.getElementById('openSpaceArea');
+      var amenityEl = document.getElementById('amenityArea');
       var roadWidthEl = document.getElementById('roadWidth');
       var projectTypeEl = document.getElementById('projectType');
       var greenEl = document.getElementById('greenRating');
@@ -344,7 +354,13 @@
       var fallbackBtn = document.getElementById('fallbackBtn');
       var nonTgNote = document.getElementById('nonTgNote');
 
-      dateEl.value = new Date().toISOString().slice(0, 10);
+      var now = new Date();
+      dateEl.value =
+        now.getFullYear() +
+        '-' +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(now.getDate()).padStart(2, '0');
 
       function getSelectedZone() {
         var checked = document.querySelector('input[name="zone"]:checked');
@@ -386,6 +402,8 @@
           if (d.plotAreaSite !== undefined) plotSiteEl.value = d.plotAreaSite;
           if (d.roadWidening !== undefined) roadWidenEl.value = d.roadWidening;
           if (d.dpReservation !== undefined) dpEl.value = d.dpReservation;
+          if (d.openSpaceArea !== undefined) openSpaceEl.value = d.openSpaceArea;
+          if (d.amenityArea !== undefined) amenityEl.value = d.amenityArea;
           if (d.projectType) projectTypeEl.value = d.projectType;
           if (d.greenRating) greenEl.value = d.greenRating;
           if (d.loading !== undefined) loadingEl.value = d.loading;
@@ -418,6 +436,8 @@
         var pSite = parseFloat(plotSiteEl.value);
         var roadWiden = parseFloat(roadWidenEl.value || '0');
         var dp = parseFloat(dpEl.value || '0');
+        var openSpaceArea = parseFloat(openSpaceEl.value || '0');
+        var amenityArea = parseFloat(amenityEl.value || '0');
         var loading = parseFloat(loadingEl.value === '' ? '15' : loadingEl.value);
 
         if (!dateEl.value) return { error: 'Please select a Date.' };
@@ -427,6 +447,8 @@
         if (!Number.isFinite(pSite) || pSite <= 0) return { error: 'Plot Area (Site Measurement) must be greater than 0.' };
         if (!Number.isFinite(roadWiden) || roadWiden < 0) return { error: 'Road Widening Area must be 0 or greater.' };
         if (!Number.isFinite(dp) || dp < 0) return { error: 'D.P. Reservation Area must be 0 or greater.' };
+        if (!Number.isFinite(openSpaceArea) || openSpaceArea < 0) return { error: 'Open Space Area must be 0 or greater.' };
+        if (!Number.isFinite(amenityArea) || amenityArea < 0) return { error: 'Amenity Area must be 0 or greater.' };
         if (!Number.isFinite(loading) || loading < 0 || loading > 100) return { error: 'Saleable Loading % must be between 0 and 100.' };
 
         return {
@@ -438,6 +460,8 @@
             plotAreaSite: pSite,
             roadWidening: roadWiden,
             dpReservation: dp,
+            openSpaceArea: openSpaceArea,
+            amenityArea: amenityArea,
             roadWidth: roadWidthEl.value,
             projectType: projectTypeEl.value,
             greenRating: greenEl.value,

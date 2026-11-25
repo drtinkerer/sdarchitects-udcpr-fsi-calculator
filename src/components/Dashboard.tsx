@@ -167,6 +167,71 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <p className="text-[10px] text-slate-400 mt-1">Row 2b (Green belt surrender)</p>
             </div>
           </div>
+
+          {/* Optional Open Space & Amenity Overrides */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider">
+                  Open Space Area (Optional)
+                </label>
+                <span
+                  className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                    (Number(formData.openSpaceArea) || 0) > 0
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-slate-100 text-slate-500'
+                  }`}
+                >
+                  {(Number(formData.openSpaceArea) || 0) > 0 ? 'Override' : 'Auto Formula'}
+                </span>
+              </div>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.openSpaceArea ?? 0}
+                  onChange={e => onChange({ openSpaceArea: parseFloat(e.target.value) || 0 })}
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 pr-14 text-sm font-mono text-slate-800 focus:ring-2 focus:ring-sky-500 outline-none shadow-sm"
+                />
+                <span className="absolute right-3.5 top-2 text-xs font-medium text-slate-400 pointer-events-none">sq.m</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Row 4b: leave 0.00 for auto formula (10% if &gt; 4,000 sq.m); enter &gt; 0 to override
+              </p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider">
+                  Amenity Area (Optional)
+                </label>
+                <span
+                  className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                    (Number(formData.amenityArea) || 0) > 0
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-slate-100 text-slate-500'
+                  }`}
+                >
+                  {(Number(formData.amenityArea) || 0) > 0 ? 'Override' : 'Auto Formula'}
+                </span>
+              </div>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.amenityArea ?? 0}
+                  onChange={e => onChange({ amenityArea: parseFloat(e.target.value) || 0 })}
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 pr-14 text-sm font-mono text-slate-800 focus:ring-2 focus:ring-sky-500 outline-none shadow-sm"
+                />
+                <span className="absolute right-3.5 top-2 text-xs font-medium text-slate-400 pointer-events-none">sq.m</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Row 5b: leave 0.00 for auto formula (5% if &gt; 20,000 sq.m); enter &gt; 0 to override
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* ROW 3: Road Width, Project Type, Green FSI & Saleable Loading */}

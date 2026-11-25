@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProjectFormData, ZoneType } from '@/lib/types/udcpr';
-import { ROAD_WIDTH_MAP } from '@/lib/udcpr/constants';
+import { ROAD_WIDTH_MAP, getTodayLocalIsoDate } from '@/lib/udcpr/constants';
 
 const ZONE_LABELS: Record<ZoneType, string> = {
   regular: 'Regular Zone',
@@ -28,13 +28,15 @@ export async function POST(req: NextRequest) {
     const telegramChatId = process.env.TELEGRAM_CHAT_ID?.trim() || '';
 
     const payload = {
-      date: formData.date ?? new Date().toISOString().slice(0, 10),
+      date: formData.date?.trim() || getTodayLocalIsoDate(),
       clientName: formData.clientName.trim(),
       projectName: formData.projectName.trim(),
       plotArea712: Number(formData.plotArea712) || 0,
       plotAreaSite: Number(formData.plotAreaSite) || 0,
       roadWidening: Number(formData.roadWidening) || 0,
       dpReservation: Number(formData.dpReservationArea) || 0,
+      openSpaceArea: Math.max(0, Number(formData.openSpaceArea) || 0),
+      amenityArea: Math.max(0, Number(formData.amenityArea) || 0),
       roadWidth: roadInfo?.tag ?? '12m',
       projectType: formData.projectType ?? 'residential',
       greenRating: formData.greenFsiType ?? 'none',

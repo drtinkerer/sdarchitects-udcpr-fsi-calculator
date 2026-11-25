@@ -24,6 +24,8 @@ export interface ProjectFormData {
   roadWidening: number;
   dpReservationArea?: number;
   internalRoadArea?: number;
+  openSpaceArea?: number;
+  amenityArea?: number;
   saleableLoadingPct?: number;
   roadWidthCode: string;
   projectType: ProjectType;

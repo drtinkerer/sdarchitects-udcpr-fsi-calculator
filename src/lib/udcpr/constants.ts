@@ -86,8 +86,17 @@ export function getGreenFsiConfig(code: string): GreenFsiConfig {
   }
 }
 
+/** Return today's date as YYYY-MM-DD in the local timezone. */
+export function getTodayLocalIsoDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export const DEFAULT_FORM_DATA: ProjectFormData = {
-  date: '2026-11-11',
+  date: '',
   clientName: 'RIGHT FOUNDATION',
   projectName: 'SALISBURY PARK',
   plotArea712: 2071.27,
@@ -95,6 +104,8 @@ export const DEFAULT_FORM_DATA: ProjectFormData = {
   roadWidening: 171.10,
   dpReservationArea: 0,
   internalRoadArea: 0,
+  openSpaceArea: 0,
+  amenityArea: 0,
   saleableLoadingPct: 15,
   roadWidthCode: 'w_24',
   projectType: 'residential',

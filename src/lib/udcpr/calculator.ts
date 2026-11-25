@@ -11,6 +11,17 @@ import {
   getGreenFsiConfig
 } from './constants';
 
+/** Return manual override or positive form input (> 0), otherwise keep the formula value. */
+function resolvePositiveOverride(
+  override: number | undefined,
+  formInput: number | undefined,
+  formulaValue: number
+): number {
+  if (override !== undefined) return override;
+  const val = Number(formInput) || 0;
+  return val > 0 ? val : formulaValue;
+}
+
 export function calculateRegularZone(formData: ProjectFormData, overrides: RowOverrides = {}): CalculationResult {
   const c6 = overrides[6] !== undefined ? overrides[6] : (Number(formData.plotArea712) || 0);
   const c7 = overrides[7] !== undefined ? overrides[7] : (Number(formData.plotAreaSite) || 0);
@@ -22,9 +33,9 @@ export function calculateRegularZone(formData: ProjectFormData, overrides: RowOv
 
   // Open Space & Amenity Space
   const c15 = overrides[15] !== undefined ? overrides[15] : (c13 > 3999.99 ? c13 * 0.10 : 0.0);
-  const c16 = overrides[16] !== undefined ? overrides[16] : c15;
+  const c16 = resolvePositiveOverride(overrides[16], formData.openSpaceArea, c15);
   const c18 = overrides[18] !== undefined ? overrides[18] : (c13 > 19999.99 ? c13 * 0.05 : 0.0);
-  const c19 = overrides[19] !== undefined ? overrides[19] : c18;
+  const c19 = resolvePositiveOverride(overrides[19], formData.amenityArea, c18);
 
   const c20 = overrides[20] !== undefined ? overrides[20] : 0.0;
   const c21 = overrides[21] !== undefined ? overrides[21] : (Number(formData.internalRoadArea) || 0.0);
@@ -100,9 +111,9 @@ export function calculateTODZone(formData: ProjectFormData, overrides: RowOverri
   const c13 = overrides[13] !== undefined ? overrides[13] : Math.max(0, c8 - c12);
 
   const c15 = overrides[15] !== undefined ? overrides[15] : (c13 > 3999.99 ? c13 * 0.10 : 0.0);
-  const c16 = overrides[16] !== undefined ? overrides[16] : c15;
+  const c16 = resolvePositiveOverride(overrides[16], formData.openSpaceArea, c15);
   const c18 = overrides[18] !== undefined ? overrides[18] : (c13 > 19999.99 ? c13 * 0.05 : 0.0);
-  const c19 = overrides[19] !== undefined ? overrides[19] : c18;
+  const c19 = resolvePositiveOverride(overrides[19], formData.amenityArea, c18);
 
   const c20 = overrides[20] !== undefined ? overrides[20] : 0.0;
   const c21 = overrides[21] !== undefined ? overrides[21] : (Number(formData.internalRoadArea) || 0.0);
@@ -184,9 +195,9 @@ export function calculateCBDZone(formData: ProjectFormData, overrides: RowOverri
   const c13 = overrides[13] !== undefined ? overrides[13] : Math.max(0, c8 - c12);
 
   const c15 = overrides[15] !== undefined ? overrides[15] : (c13 > 3999.99 ? c13 * 0.10 : 0.0);
-  const c16 = overrides[16] !== undefined ? overrides[16] : c15;
+  const c16 = resolvePositiveOverride(overrides[16], formData.openSpaceArea, c15);
   const c18 = overrides[18] !== undefined ? overrides[18] : (c13 > 19999.99 ? c13 * 0.05 : 0.0);
-  const c19 = overrides[19] !== undefined ? overrides[19] : c18;
+  const c19 = resolvePositiveOverride(overrides[19], formData.amenityArea, c18);
 
   const c20 = overrides[20] !== undefined ? overrides[20] : 0.0;
   const c21 = overrides[21] !== undefined ? overrides[21] : (Number(formData.internalRoadArea) || 0.0);
