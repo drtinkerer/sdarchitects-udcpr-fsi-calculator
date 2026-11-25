@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>UDCPR FSI Input Form</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: var(--tg-theme-bg-color, #f8fafc);
+      --card: var(--tg-theme-secondary-bg-color, #ffffff);
+      --text: var(--tg-theme-text-color, #0f172a);
+      --hint: var(--tg-theme-hint-color, #64748b);
+      --accent: var(--tg-theme-button-color, #0284c7);
+      --accent-text: var(--tg-theme-button-text-color, #ffffff);
+      --border: rgba(148, 163, 184, 0.35);
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 14px 14px 88px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .header {
+      margin-bottom: 14px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: var(--hint);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--hint);
+      margin: 0 0 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 460px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label.lbl {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 5px;
+      color: var(--text);
+    }
+
+    .req { color: var(--danger); }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.18);
+    }
+
+    .hint-sub {
+      font-size: 11px;
+      color: var(--hint);
+      margin-top: 3px;
+    }
+
+    .zone-options {
+      display: grid;
+      gap: 8px;
+    }
+
+    .option-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      cursor: pointer;
+    }
+
+    .option-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .option-card input {
+      margin-top: 3px;
+      accent-color: var(--accent);
+    }
+
+    .option-title {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .option-desc {
+      font-size: 11px;
+      color: var(--hint);
+      margin-top: 2px;
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--danger);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .submit-fallback {
+      width: 100%;
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: var(--accent-text);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .warn-non-tg {
+      display: none;
+      font-size: 12px;
+      color: var(--hint);
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>UDCPR FSI Input Form</h1>
+    <p>Enter project details to generate the Google Sheet &amp; PDF via n8n.</p>
+  </div>
+
+  <div id="errorBox" class="error-box"></div>
+
+  <form id="fsiForm" novalidate>
+    <div class="card">
+      <div class="section-title">Project Details</div>
+      <div class="field">
+        <label class="lbl" for="date">Date <span class="req">*</span></label>
+        <input type="date" id="date" required />
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="lbl" for="clientName">Client Name <span class="req">*</span></label>
+          <input type="text" id="clientName" placeholder="e.g. RIGHT FOUNDATION" required />
+        </div>
+        <div class="field">
+          <label class="lbl" for="projectName">Project Name / Location <span class="req">*</span></label>
+          <input type="text" id="projectName" placeholder="e.g. SALISBURY PARK" required />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Plot Areas &amp; Deductions (sq.m)</div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="lbl" for="plotArea712">Plot Area (7/12 Extract) <span class="req">*</span></label>
+          <input type="number" id="plotArea712" step="0.01" min="0" inputmode="decimal" placeholder="e.g. 2071.27" required />
+        </div>
+        <div class="field">
+          <label class="lbl" for="plotAreaSite">Plot Area (Site Measurement) <span class="req">*</span></label>
+          <input type="number" id="plotAreaSite" step="0.01" min="0" inputmode="decimal" placeholder="e.g. 2071.27" required />
+        </div>
+        <div class="field">
+          <label class="lbl" for="roadWidening">Road Widening Area</label>
+          <input type="number" id="roadWidening" step="0.01" min="0" inputmode="decimal" value="0" />
+        </div>
+        <div class="field">
+          <label class="lbl" for="dpReservation">D.P. Reservation / Green Belt</label>
+          <input type="number" id="dpReservation" step="0.01" min="0" inputmode="decimal" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Zoning Regulation Model <span class="req">*</span></div>
+      <div class="zone-options" id="zoneOptions">
+        <label class="option-card active">
+          <input type="radio" name="zone" value="Regular Zone" checked />
+          <div>
+            <div class="option-title">Regular Zone</div>
+            <div class="option-desc">UDCPR Table 6-A standard residential/commercial (53 Rows)</div>
+          </div>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="zone" value="TOD Zone (Metro Corridor)" />
+          <div>
+            <div class="option-title">TOD Zone (Metro Corridor)</div>
+            <div class="option-desc">Chapter 13 Transit Oriented Development within 500m (46 Rows)</div>
+          </div>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="zone" value="CBD Zone (Commercial Core)" />
+          <div>
+            <div class="option-title">CBD Zone (Commercial Core)</div>
+            <div class="option-desc">Commercial Core District, min 12m road width (46 Rows)</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Parameters</div>
+      <div class="grid-2">
+        <div class="field">
+          <label class="lbl" for="roadWidth">Road Width <span class="req">*</span></label>
+          <select id="roadWidth"></select>
+        </div>
+        <div class="field">
+          <label class="lbl" for="projectType">Project Type <span class="req">*</span></label>
+          <select id="projectType">
+            <option value="residential">Residential (60% Ancillary)</option>
+            <option value="commercial">Commercial (80% Ancillary)</option>
+            <option value="mixed">Mixed Use (60% Ancillary)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="lbl" for="greenRating">Green Building Rating</label>
+          <select id="greenRating">
+            <option value="none">None (0%)</option>
+            <option value="green_griha_3">GRIHA 3-Star / IGBC Silver (+3%)</option>
+            <option value="green_griha_4">GRIHA 4-Star / IGBC Gold (+5%)</option>
+            <option value="green_griha_5">GRIHA 5-Star / IGBC Platinum (+7%)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="lbl" for="loading">Saleable Loading %</label>
+          <input type="number" id="loading" step="0.5" min="0" max="50" inputmode="decimal" value="15" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">PDF Output Option</div>
+      <label class="option-card active" id="tgToggleCard">
+        <input type="checkbox" id="sendToTelegram" checked />
+        <div>
+          <div class="option-title">Send PDF to Telegram Group</div>
+          <div class="option-desc">PDF is always saved to Google Drive. Toggle this on to also post to the group.</div>
+        </div>
+      </label>
+    </div>
+
+    <button type="submit" id="fallbackBtn" class="submit-fallback">Generate PDF via n8n</button>
+    <p id="nonTgNote" class="warn-non-tg">Open this page from the Telegram bot Reply Keyboard button to submit directly to n8n.</p>
+  </form>
+
+  <script>
+    (function () {
+      var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      var STORAGE_KEY = 'udcpr_tg_mini_app_v1';
+
+      var ROAD_OPTIONS = [
+        { tag: '6m', label: '6.00 m (Basic FSI = 1.10 | TDR = 0.00)', minCbd: false },
+        { tag: '7.5m', label: '7.50 m (Basic FSI = 1.10 | TDR = 0.00)', minCbd: false },
+        { tag: '9m', label: '9.00 m (TDR = 0.40 | Potential = 2.00)', minCbd: false },
+        { tag: '12m', label: '12.00 m (TDR = 0.65 | Potential = 2.25)', minCbd: true },
+        { tag: '15m', label: '15.00 m (TDR = 0.90 | Potential = 2.50)', minCbd: true },
+        { tag: '18m', label: '18.00 m (TDR = 0.90 | Potential = 2.50)', minCbd: true },
+        { tag: '21m', label: '21.00 m (TDR = 0.90 | Potential = 2.50)', minCbd: true },
+        { tag: '24m', label: '24.00 m (TDR = 1.15 | Potential = 2.75)', minCbd: true },
+        { tag: '27m', label: '27.00 m (TDR = 1.15 | Potential = 2.75)', minCbd: true },
+        { tag: '30m', label: '30.00 m (TDR = 1.40 | Potential = 3.00)', minCbd: true },
+        { tag: 'Above 30m', label: 'Above 30.00 m (TDR = 1.40 | Potential = 3.00)', minCbd: true }
+      ];
+
+      var dateEl = document.getElementById('date');
+      var clientEl = document.getElementById('clientName');
+      var projectEl = document.getElementById('projectName');
+      var plot712El = document.getElementById('plotArea712');
+      var plotSiteEl = document.getElementById('plotAreaSite');
+      var roadWidenEl = document.getElementById('roadWidening');
+      var dpEl = document.getElementById('dpReservation');
+      var roadWidthEl = document.getElementById('roadWidth');
+      var projectTypeEl = document.getElementById('projectType');
+      var greenEl = document.getElementById('greenRating');
+      var loadingEl = document.getElementById('loading');
+      var tgCheckEl = document.getElementById('sendToTelegram');
+      var tgToggleCard = document.getElementById('tgToggleCard');
+      var errorBox = document.getElementById('errorBox');
+      var fallbackBtn = document.getElementById('fallbackBtn');
+      var nonTgNote = document.getElementById('nonTgNote');
+
+      dateEl.value = new Date().toISOString().slice(0, 10);
+
+      function getSelectedZone() {
+        var checked = document.querySelector('input[name="zone"]:checked');
+        return checked ? checked.value : 'Regular Zone';
+      }
+
+      function populateRoadWidths(preferredTag) {
+        var isCbd = getSelectedZone() === 'CBD Zone (Commercial Core)';
+        var prev = preferredTag || roadWidthEl.value || '24m';
+        roadWidthEl.innerHTML = '';
+        var validPrev = false;
+        ROAD_OPTIONS.forEach(function (opt) {
+          if (isCbd && !opt.minCbd) return;
+          var o = document.createElement('option');
+          o.value = opt.tag;
+          o.textContent = opt.label;
+          if (opt.tag === prev) validPrev = true;
+          roadWidthEl.appendChild(o);
+        });
+        roadWidthEl.value = validPrev ? prev : '24m';
+      }
+
+      function refreshCards() {
+        document.querySelectorAll('#zoneOptions .option-card').forEach(function (card) {
+          var input = card.querySelector('input');
+          card.classList.toggle('active', Boolean(input && input.checked));
+        });
+        tgToggleCard.classList.toggle('active', tgCheckEl.checked);
+      }
+
+      function loadDraft() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var d = JSON.parse(raw);
+          if (d.clientName) clientEl.value = d.clientName;
+          if (d.projectName) projectEl.value = d.projectName;
+          if (d.plotArea712 !== undefined) plot712El.value = d.plotArea712;
+          if (d.plotAreaSite !== undefined) plotSiteEl.value = d.plotAreaSite;
+          if (d.roadWidening !== undefined) roadWidenEl.value = d.roadWidening;
+          if (d.dpReservation !== undefined) dpEl.value = d.dpReservation;
+          if (d.projectType) projectTypeEl.value = d.projectType;
+          if (d.greenRating) greenEl.value = d.greenRating;
+          if (d.loading !== undefined) loadingEl.value = d.loading;
+          if (typeof d.sendToTelegram === 'boolean') tgCheckEl.checked = d.sendToTelegram;
+          if (d.zone) {
+            var radio = document.querySelector('input[name="zone"][value="' + d.zone + '"]');
+            if (radio) radio.checked = true;
+          }
+          populateRoadWidths(d.roadWidth || '24m');
+          refreshCards();
+        } catch (_) {
+          populateRoadWidths('24m');
+        }
+      }
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function clearError() {
+        errorBox.style.display = 'none';
+      }
+
+      function buildPayload() {
+        var clientName = clientEl.value.trim();
+        var projectName = projectEl.value.trim();
+        var p712 = parseFloat(plot712El.value);
+        var pSite = parseFloat(plotSiteEl.value);
+        var roadWiden = parseFloat(roadWidenEl.value || '0');
+        var dp = parseFloat(dpEl.value || '0');
+        var loading = parseFloat(loadingEl.value === '' ? '15' : loadingEl.value);
+
+        if (!dateEl.value) return { error: 'Please select a Date.' };
+        if (!clientName) return { error: 'Client Name is required.' };
+        if (!projectName) return { error: 'Project Name / Location is required.' };
+        if (!Number.isFinite(p712) || p712 <= 0) return { error: 'Plot Area (7/12 Extract) must be greater than 0.' };
+        if (!Number.isFinite(pSite) || pSite <= 0) return { error: 'Plot Area (Site Measurement) must be greater than 0.' };
+        if (!Number.isFinite(roadWiden) || roadWiden < 0) return { error: 'Road Widening Area must be 0 or greater.' };
+        if (!Number.isFinite(dp) || dp < 0) return { error: 'D.P. Reservation Area must be 0 or greater.' };
+        if (!Number.isFinite(loading) || loading < 0 || loading > 100) return { error: 'Saleable Loading % must be between 0 and 100.' };
+
+        return {
+          payload: {
+            date: dateEl.value,
+            clientName: clientName,
+            projectName: projectName,
+            plotArea712: p712,
+            plotAreaSite: pSite,
+            roadWidening: roadWiden,
+            dpReservation: dp,
+            roadWidth: roadWidthEl.value,
+            projectType: projectTypeEl.value,
+            greenRating: greenEl.value,
+            loading: loading,
+            zone: getSelectedZone(),
+            sendToTelegram: tgCheckEl.checked
+          }
+        };
+      }
+
+      function handleSubmit() {
+        clearError();
+        var res = buildPayload();
+        if (res.error) {
+          showError(res.error);
+          return;
+        }
+
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(res.payload));
+        } catch (_) {}
+
+        if (tg && typeof tg.sendData === 'function' && tg.initData) {
+          tg.sendData(JSON.stringify(res.payload));
+        } else {
+          showError('This form must be opened from the Telegram bot button to send data to n8n.');
+        }
+      }
+
+      document.querySelectorAll('input[name="zone"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+          populateRoadWidths();
+          refreshCards();
+        });
+      });
+
+      tgCheckEl.addEventListener('change', refreshCards);
+
+      document.getElementById('fsiForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        handleSubmit();
+      });
+
+      populateRoadWidths('24m');
+      loadDraft();
+      refreshCards();
+
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.initData) {
+          fallbackBtn.style.display = 'none';
+          tg.MainButton.setText('Generate PDF via n8n');
+          tg.MainButton.show();
+          tg.MainButton.onClick(handleSubmit);
+        } else {
+          nonTgNote.style.display = 'block';
+        }
+      } else {
+        nonTgNote.style.display = 'block';
+      }
+    })();
+  </script>
+</body>
+</html>
