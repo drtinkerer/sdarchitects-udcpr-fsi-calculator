@@ -11,3 +11,17 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - N8N_WEBHOOK_URL=https://n8n.pi5.cloudpoet.in/webhook/sdarchitects-zoning-export
+      - TELEGRAM_CHAT_ID=-5146207180
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-proxy
+      - traefik.http.routers.fsi.rule=Host(`fsi.cloudpoet.in`)
+      - traefik.http.routers.fsi.entrypoints=web-secure
+      - traefik.http.routers.fsi.tls.certresolver=cloudflare
+      - traefik.http.services.fsi.loadbalancer.server.port=3000
+    networks:
+      - traefik-proxy
+
+networks:
+  traefik-proxy:
+    external: true

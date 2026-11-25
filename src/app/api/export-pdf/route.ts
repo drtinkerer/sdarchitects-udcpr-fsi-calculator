@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
     }
 
     const roadInfo = formData.roadWidthCode ? ROAD_WIDTH_MAP[formData.roadWidthCode] : undefined;
+    const sendToTelegram = formData.sendToTelegram !== false;
+    const outputMode = sendToTelegram ? 'both' : 'web';
+    const telegramChatId = process.env.TELEGRAM_CHAT_ID?.trim() || '';
+
     const payload = {
       date: formData.date ?? new Date().toISOString().slice(0, 10),
       clientName: formData.clientName.trim(),
@@ -36,6 +40,8 @@ export async function POST(req: NextRequest) {
       greenRating: formData.greenFsiType ?? 'none',
       loading: formData.saleableLoadingPct ?? 15,
       zone: formData.zone ? ZONE_LABELS[formData.zone] : ZONE_LABELS.regular,
+      outputMode,
+      telegramChatId,
     };
 
     const webhookUrl = process.env.N8N_WEBHOOK_URL || DEFAULT_N8N_WEBHOOK_URL;

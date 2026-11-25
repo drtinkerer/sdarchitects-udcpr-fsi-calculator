@@ -99,6 +99,7 @@ export const DEFAULT_FORM_DATA: ProjectFormData = {
   roadWidthCode: 'w_24',
   projectType: 'residential',
   greenFsiType: 'green_griha_4',
-  zone: 'regular'
+  zone: 'regular',
+  sendToTelegram: true
 };
 

@@ -16,6 +16,9 @@ const STORAGE_KEY_FORM = 'udcpr_form_data_v1';
 
 interface ExportResult {
   fileName: string;
+  outputMode: string;
+  telegramSent: boolean;
+  telegramError: string | null;
   folderUrl: string;
   sheetUrl: string;
   pdfUrl: string;
@@ -106,6 +109,9 @@ export default function Home() {
 
       setExportResult({
         fileName: data.fileName,
+        outputMode: data.outputMode ?? 'both',
+        telegramSent: Boolean(data.telegramSent),
+        telegramError: data.telegramError ?? null,
         folderUrl: data.folderUrl,
         sheetUrl: data.sheetUrl,
         pdfUrl: data.pdfUrl,
@@ -141,11 +147,24 @@ export default function Home() {
 
         {exportResult && (
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>
                 Generated <span className="font-semibold">{exportResult.fileName}</span> via n8n.
               </span>
+              {exportResult.outputMode !== 'web' && (
+                <span
+                  className={`text-xs font-medium px-2 py-0.5 rounded-md ${
+                    exportResult.telegramSent
+                      ? 'bg-sky-100 text-sky-900'
+                      : 'bg-amber-100 text-amber-900'
+                  }`}
+                >
+                  {exportResult.telegramSent
+                    ? 'Sent PDF to Telegram'
+                    : `Telegram not sent: ${exportResult.telegramError || 'failed'}`}
+                </span>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
               <a

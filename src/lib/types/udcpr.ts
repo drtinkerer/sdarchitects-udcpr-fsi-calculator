@@ -29,6 +29,7 @@ export interface ProjectFormData {
   projectType: ProjectType;
   greenFsiType: GreenFsiType;
   zone: ZoneType;
+  sendToTelegram?: boolean;
 }
 
 export type RowOverrides = Record<number, number>;

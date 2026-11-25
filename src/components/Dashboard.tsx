@@ -317,6 +317,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
+        {/* ROW 5: PDF Output Option */}
+        <div className="pt-2 border-t border-slate-200">
+          <div className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2.5">
+            PDF Output Option
+          </div>
+          <label
+            className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition max-w-xl ${
+              formData.sendToTelegram !== false
+                ? 'border-sky-500 bg-sky-50/60 ring-2 ring-sky-500/20'
+                : 'border-slate-200 bg-white hover:bg-slate-50'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={formData.sendToTelegram !== false}
+              onChange={e => onChange({ sendToTelegram: e.target.checked })}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+            />
+            <div>
+              <div className="font-bold text-xs sm:text-sm text-slate-900">Send PDF to Telegram</div>
+              <div className="text-[11px] text-slate-500 mt-0.5">
+                PDF is always saved to Google Drive. Toggle this on to also send the PDF to Telegram.
+              </div>
+            </div>
+          </label>
+        </div>
+
         {/* Action Button Bar */}
         <div className="pt-4 border-t border-slate-200">
           <button
